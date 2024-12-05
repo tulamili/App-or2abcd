@@ -40,9 +40,9 @@ sub main () {
     printf sprintf "%g(%g) %g(%g)\t", $v0/$v1, log($v0/$v1) , $v2/$v0 , log($v2/$v0 ) ; 
     say FAINT BOLD "\t<-- each ratio(log) of $v0/$v1 and $v2/$v0"; 
     say FAINT BOLD "\t\t\twhere $v0, $v1, $v2 are observed odds ratio, and the bounds of 95% confidence interval." ;
-    my $RS4 = rs4(sqrt($v2/$v1))  ; 
-    my $iv = 4/$RS4 ; # inner value の頭文字。a,b,c,dの4個の数の、最小と最大の中に含まれる数である。
-    say sprintf ("%g -> %g" , $RS4 , $iv ) , "\t" , FAINT BOLD "1/a+1/b+1/c+1/d とその値から導いた区間[min{a,b,c,d},max{a,b,c,d}]が含むべき値" ; 
+    my $rs4v = rs4 (sqrt($v2/$v1))  ; 
+    my $iv = 4/$rs4v ; # inner value の頭文字。a,b,c,dの4個の数の、最小と最大の中に含まれる数である。
+    say sprintf ("%g -> %g" , $rs4v , $iv ) , "\t" , FAINT BOLD "1/a+1/b+1/c+1/d とその値から導いた区間[min{a,b,c,d},max{a,b,c,d}]が含むべき値" ; 
     my $nr = sqrt($v0) ; # neighboring ratio の意味で名付けた。a/b,a/c,b/d,c/dのどれかは、数値区間[$nr,1/$nr]の外にある。
     say sprintf ( "%g, %g" , min($nr,1/$nr), max($nr,1/$nr) ), "\t" , FAINT BOLD "左をl,mとすると、2x2の表で上下左右隣り合う数の比であるa/b,a/c,b/d,c/dのどれかは、区間(l,m)の外。" ; 
     # exit ; 
