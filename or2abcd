@@ -37,20 +37,22 @@ sub main () {
   my $v2 = $ARGV[2] // undef ;  # 推定したオッズ比の上限値
   
   if ( $o{v} ) { 
-    say sprintf "%g(%g) %g(%g)", $v0/$v1, log($v0/$v1) , $v2/$v0 , log($v2/$v0 ) ; 
+    printf sprintf "%g(%g) %g(%g)\t", $v0/$v1, log($v0/$v1) , $v2/$v0 , log($v2/$v0 ) ; 
+    say FAINT BOLD "<-- each ratio(log) of $v0/$v1 and $v2/$v0"; 
+    say FAINT BOLD "where $v0, $v1, $v2 are observed odds ratio, and the bounds of 95% confidence interval." ;
     exit ; 
   }
   #say join ", " , map { log $_ } $v0 , $v1 , $v2 ; 
   #say "   " log $v0 - log $v1 , log $v2 - log $v0 ;
   # 下限の$v1を使うと、誤差が大きくなるので(数値区間で考えると良い)、上限の値を採用。 
   say YELLOW UNDERLINE "以下の結果は、2x2のクロス表において、a=d ∩ b=c を仮定している。" ; 
-  say join "\t" , rg2ab ( sqrt $v0, gw ( $v0, $v2 ) / 2 ) , ": 上限値と中心値を使った場合の aとdの相乗平均, bとcの相乗平均" ; 
-  say join "\t" , rg2ab ( sqrt $v0, gw ( $v1, $v0 ) / 2 ) , ": 下限値と中心値を使った場合の aとdの相乗平均, bとcの相乗平均" ; 
-  say join "\t" , rg2ab ( sqrt $v0, gw ( 1, sqrt($v2/$v1) ) / 2 ) , ": 下限値と下限値の比からデルタ法で対数オッズ比の標準誤差を計算した場合の aとdの相乗平均, bとcの相乗平均" ; 
+  say join "\t" , rg2ab ( sqrt $v0, rs4 ( $v2 / $v0 ) / 2 ) , ": 上限値と中心値を使った場合の aとdの相乗平均, bとcの相乗平均" ; 
+  say join "\t" , rg2ab ( sqrt $v0, rs4 ( $v0 / $v1 ) / 2 ) , ": 下限値と中心値を使った場合の aとdの相乗平均, bとcの相乗平均" ; 
+  say join "\t" , rg2ab ( sqrt $v0, rs4 ( sqrt($v2/$v1) ) / 2 ) , ": 下限値と下限値の比からデルタ法で対数オッズ比の標準誤差を計算した場合の aとdの相乗平均, bとcの相乗平均" ; 
 
 }
 
-sub gw ($$) { ( log ( $_[1]/$_[0] ) / $q95 ) ** 2 } # 4個の数(a,b,c,d)逆数の和の推定値を返す。逆数Gと和Wを繋げてGW
+sub rs4 ($) { ( log ( $_[0] ) / $q95 ) ** 2 } # 4個の数(a,b,c,d)逆数の4個の和の推定値を返す。逆数Gと和Wを繋げて reciprocal sum 
 sub rg2ab ($$) { my ($r,$w) = @_ ; return ( ($r+1)/$w , ($r+1)/($r*$w) ) } # 比(ad/bc)の値rと、(GW/2)の値gが引数。返り値は、aとb ただし、a=d, b=cの仮定をした。
 
 
